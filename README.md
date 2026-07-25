@@ -92,6 +92,10 @@ GEMINI_API_KEY=YOUR_API_KEY
 
 npm run dev
 
+Screenshots
+
+#Homepage
+https://github.com/sharlawazir/Exam-Buddy-AI/blob/39c366888875e97288f657b7a255a53983e01fa2/Home%20page%20of%20Exam%20Buddy.png
 
 ---
 
