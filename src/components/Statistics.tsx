@@ -2,7 +2,7 @@ import { BookOpen, Bot, GraduationCap } from 'lucide-react';
 
 const STATS = [
   { icon: BookOpen, emoji: '📚', label: '5 AI Study Tools' },
-  { icon: Bot, emoji: '🤖', label: 'Powered by Gemini AI' },
+  { icon: Bot, emoji: '🤖', label: 'Powered by Grok AI' },
   { icon: GraduationCap, emoji: '🎓', label: 'Designed for University Students' },
 ];
 

@@ -18,7 +18,7 @@ const STEPS = [
     icon: Sparkles,
     number: '3',
     title: 'Get Instant AI Help',
-    description: 'Receive fast, clear, and personalised responses powered by Gemini AI.',
+    description: 'Receive fast, clear, and personalised responses powered by Grok AI.',
   },
 ];
 
