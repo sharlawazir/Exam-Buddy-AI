@@ -101,7 +101,10 @@ Screenshots
 ![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/80504ce972c46bc28cb7f2702806dbfb7b56ec14/Student%20dashboard.png)
 
 #WORKING OF FEATURES
+![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/c7e0b5b3d6b2881d479255d483250b3abde4be88/Working%20of%20features.png)
 ![image alt ](
+
+
 
 
 ---
