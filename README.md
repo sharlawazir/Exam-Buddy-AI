@@ -94,8 +94,15 @@ npm run dev
 
 Screenshots
 
-#Homepage
+#HOMEPAGE
 ![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/39c366888875e97288f657b7a255a53983e01fa2/Home%20page%20of%20Exam%20Buddy.png)
+
+#STUDENT DASHBOARD
+![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/80504ce972c46bc28cb7f2702806dbfb7b56ec14/Student%20dashboard.png)
+
+#WORKING OF FEATURES
+![image alt ](
+
 
 ---
 
