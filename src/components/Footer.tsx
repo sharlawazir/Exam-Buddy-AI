@@ -22,7 +22,7 @@ export function Footer() {
               Built by Sharla Wazir
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Powered by Grok AI
+              Powered by Gemini AI
             </p>
           </div>
 

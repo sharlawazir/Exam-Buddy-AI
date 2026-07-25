@@ -19,9 +19,17 @@ interface AiRequest {
   payload: Record<string, string>;
 }
 
-interface ChatMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
+interface GeminiPart {
+  text: string;
+}
+
+interface GeminiContent {
+  parts: GeminiPart[];
+}
+
+interface GeminiMessage {
+  role: "user" | "model";
+  parts: GeminiPart[];
 }
 
 const FORMATTING_RULES =
@@ -131,7 +139,7 @@ function fallbackResponse(feature: Feature, payload: Record<string, string>): st
       const hours = payload.hours || "2";
       const days = daysUntilExam(payload.examDate);
       const dayCount = days === null ? 2 : Math.max(1, days);
-      let plan = `Study Plan: ${subject}\n\n(Preview mode - connect the Grok API key for a personalized plan.)\n\nBased on ${hours} hours of study per day:\n`;
+      let plan = `Study Plan: ${subject}\n\n(Preview mode - connect the Gemini API key for a personalized plan.)\n\nBased on ${hours} hours of study per day:\n`;
       for (let i = 1; i <= dayCount; i++) {
         plan += `\nDay ${i}\n`;
         if (i === dayCount) {
@@ -146,16 +154,16 @@ function fallbackResponse(feature: Feature, payload: Record<string, string>): st
     case "quiz-generator": {
       const topic = payload.topic || "this topic";
       return (
-        `Quiz: ${topic}\n\n(Preview mode - connect the Grok API key for a real generated quiz.)\n\n` +
+        `Quiz: ${topic}\n\n(Preview mode - connect the Gemini API key for a real generated quiz.)\n\n` +
         `1. Which best describes the core idea of ${topic}?\nA. Option one\nB. Option two\nC. Option three\nD. Option four\nCorrect answer: B\nExplanation placeholder.\n\n` +
         `2. A second sample question about ${topic}?\nA. Option one\nB. Option two\nC. Option three\nD. Option four\nCorrect answer: A\nExplanation placeholder.\n\n` +
-        `(Connect Grok to generate all 10 questions.)`
+        `(Connect Gemini to generate all 10 questions.)`
       );
     }
     case "topic-explainer": {
       const topic = payload.topic || "this topic";
       return (
-        `${topic}\n\n(Preview mode - connect the Grok API key for a full explanation.)\n\n` +
+        `${topic}\n\n(Preview mode - connect the Gemini API key for a full explanation.)\n\n` +
         `Definition\nA short, clear definition of ${topic} in plain words.\n\n` +
         `Key ideas\n${topic} can be understood by connecting a few simple ideas. Think of it like a recipe: each step builds on the last.\n\n` +
         `Worked example\nA basic example showing ${topic} in everyday life.\n\n` +
@@ -165,7 +173,7 @@ function fallbackResponse(feature: Feature, payload: Record<string, string>): st
     }
     case "notes-summarizer": {
       return (
-        `Summary\n\n(Preview mode - connect the Grok API key to summarize your notes.)\n\n` +
+        `Summary\n\n(Preview mode - connect the Gemini API key to summarize your notes.)\n\n` +
         `Summary\nA concise summary of the pasted notes would appear here.\n\n` +
         `Key Points\n- First key point from the notes\n- Second key point from the notes\n- Third key point from the notes\n\n` +
         `Revision Tips\n- Rewrite the key points from memory and check against the original\n- Make flashcards for the most important terms\n- Explain each point aloud as if teaching a friend`
@@ -210,7 +218,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const apiKey = Deno.env.get("grok_API_KEY");
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) {
       return new Response(
         JSON.stringify({
@@ -224,36 +232,36 @@ Deno.serve(async (req: Request) => {
     const systemPrompt = SYSTEM_PROMPTS[feature];
     const userPrompt = buildUserPrompt(feature, payload || {});
 
-    const messages: ChatMessage[] = [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ];
+    const contents: GeminiContent = {
+      parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }],
+    };
 
-    const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "grok-3-mini",
-        messages,
-        temperature: 0.7,
-        max_tokens: 2048,
-      }),
-    });
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [contents],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+          },
+        }),
+      }
+    );
 
-    if (!grokRes.ok) {
-      const errText = await grokRes.text();
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text();
       return new Response(
-        JSON.stringify({ error: `Grok API error: ${grokRes.status} — ${errText}` }),
+        JSON.stringify({ error: `Gemini API error: ${geminiRes.status} — ${errText}` }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const grokData = await grokRes.json();
+    const geminiData = await geminiRes.json();
     const content =
-      grokData?.choices?.[0]?.message?.content ??
+      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
       fallbackResponse(feature, payload || {});
 
     return new Response(
