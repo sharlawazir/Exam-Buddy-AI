@@ -105,7 +105,7 @@ Screenshots
 ![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/b3a99c207472b8ede4150442b134eadadb2bc88d/working%20of%20feature.png)
 
 #FOOTER
-![image alt ](
+![image alt ](https://github.com/sharlawazir/Exam-Buddy-AI/blob/324755f3c48ba54f3dabccd8169ce180d81f5ed2/footer.png)
 
 
 
